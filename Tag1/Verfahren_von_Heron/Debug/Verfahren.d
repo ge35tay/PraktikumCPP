@@ -1,0 +1,1 @@
+Verfahren.o: ../Verfahren.cpp
