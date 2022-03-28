@@ -1,0 +1,1 @@
+Taschenrechner.o: ../Taschenrechner.cpp
