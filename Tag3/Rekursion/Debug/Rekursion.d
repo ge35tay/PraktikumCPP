@@ -1,0 +1,1 @@
+Rekursion.o: ../Rekursion.cpp
