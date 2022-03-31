@@ -15,7 +15,7 @@ int main(){
 	std::cout << auto1.getBaujahr() << '\n'<< std::endl;
 	std::cout << auto1.getID() << '\n'<< std::endl;
 	std::cout << auto1.getPreis() << '\n'<< std::endl;
-	auto1.isOLdtimer();
+	auto1.isOLdtimer(auto1);
 }
 
 
