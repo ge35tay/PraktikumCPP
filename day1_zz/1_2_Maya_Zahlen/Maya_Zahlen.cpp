@@ -1,5 +1,5 @@
 /**
- * @author Yinghan Huang 03728454 and Zhishen Zhang 93736826
+ * @author Yinghan Huang 03728454 and Zhishen Zhang 03736826
  * @brief 
  * @version 0.1
  * @date 2022-04-01
