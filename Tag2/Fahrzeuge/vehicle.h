@@ -23,7 +23,7 @@ public:
 	int getBaujahr();
 	static int getID();
 	double getPreis();
-	static void isOLdtimer(vehicle v1);
+	static bool isOLdtimer(vehicle v1);
 
 private:
 	Farbe m_Farbe;
