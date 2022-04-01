@@ -58,12 +58,14 @@ double vehicle::getPreis(){
 	return m_preis;
 }
 
-void vehicle::isOLdtimer(vehicle v1){
+bool vehicle::isOLdtimer(vehicle v1){
 	if (v1.getBaujahr() < 1980){
 		std::cout << "Geht zum Meseum" << std::endl;
+		return true;
 	}
 	else{
 		std::cout << "Willkommen aus Grüner Partei" << std::endl;
+		return false;
 	}
 }
 
