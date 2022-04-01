@@ -18,7 +18,6 @@ using namespace std;
 
 int main() {
 
-
 	int* path = new int[100000];
 	// Initializetion seed
 	srand(time(nullptr));

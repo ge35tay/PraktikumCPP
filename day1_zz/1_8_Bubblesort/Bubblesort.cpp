@@ -45,7 +45,7 @@ int main()
 	// Zufall zwischen 0 and 100
 	for (int i = 0; i < 32; i++)
 	{
-		*(path + i) + = rand() % 101;
+		*(path + i) += rand() % 101;
 	}
 
 	bubblesort(path, 32);

@@ -21,5 +21,4 @@ int main(){
 	square s3 = s1 + s2;
 	std::cout << s3 << std::endl;
 	return 0;
-	return 0;
 }
