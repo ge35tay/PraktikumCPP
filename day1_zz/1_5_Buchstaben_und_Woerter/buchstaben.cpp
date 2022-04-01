@@ -1,3 +1,13 @@
+/**
+ * @file buchstaben.cpp
+ * @author Yinghan Huang 03728454 and Zhishen Zhang 03736826
+ * @brief 
+ * @version 0.1
+ * @date 2022-04-01
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include <string>
 #include <iostream>
 
@@ -10,21 +20,17 @@ int main()
 	std::cout << "Geben ein wort ein: ";
 	std::cin >> a;
 	InOrdnung(a);
-	std::cout << std::endl;
 	VokaleInklusiv(a);
 }
 
 void InOrdnung(std::string a)
 {
 	std::string temp = a;
-	int j = 1;
-	for (int i = 2; i < a.size(); i = j + 1)
-	{
-		temp[j] = a[i];
-		temp[i] = a[j];
-		j = j + 2;
+	for(int i = 1; i <(a.size()-2); i+=2){
+		temp[i] = a[i+1];
+		temp[i+1] = a[i];
 	}
-	std::cout << temp;
+	std::cout << temp << std::endl;
 }
 
 void VokaleInklusiv(std::string a)
@@ -40,5 +46,5 @@ void VokaleInklusiv(std::string a)
 			b.append(temp); 
 		}
 	}
-	std::cout << b;
+	std::cout <<b<< std::endl;
 }
