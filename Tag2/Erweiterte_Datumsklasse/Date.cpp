@@ -16,22 +16,22 @@ Date::Date()
 	srand(time(nullptr));
 
 	// Jahr zwischen 1970 und 2030, Monate zwischen 1 und 12
-	int year = rand() % 1970 + 61;
-	int month = rand() % 1 * 12;
+	int year = rand() % 61 + 1971;
+	int month = rand() % 12 + 1;
 	if (month == 1 || month == 3 || month == 5 || month == 7 ||
 			month == 8 || month == 10 || month == 12){
-		int day = rand() % 1 + 31;
+		int day = rand() % 31 + 1;
 	}
 	else if (month == 4 || month == 6 || month == 9 || month == 11){
-			int day = rand() % 1 + 30;
+			int day = rand() % 30 + 1;
 		}
 	else
 	{
 		if (year % 4 == 0){
-			int day = rand() % 1 + 29;
+			int day = rand() % 29 + 1;
 		}
 		else{
-			int day = rand() % 1 + 28;
+			int day = rand() % 28 + 1;
 		// Im Jahr 2000 is 29
 		}
 	}
