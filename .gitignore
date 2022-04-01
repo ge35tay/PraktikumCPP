@@ -1,0 +1,5 @@
+*.vscode
+# Output of the go coverage tool, specifically when used with Lite
+*/a.out
+a.out
+**/Debug
