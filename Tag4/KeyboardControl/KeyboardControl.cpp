@@ -6,6 +6,7 @@
  */
 
 #include <cmath>
+#include <cstdlib>
 #include "ncurses.h"
 #include "KeyboardControl.h"
 #include "InterfaceSIM.h"
@@ -72,28 +73,31 @@ void KeyboardControl::Communicate()
 						SollGeschwindigkeit[1], SollGeschwindigkeit[0]);
 				printw("Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n", 
 						IstGeschwindigkeit[1], IstGeschwindigkeit[0]);
+				SollGeschwindigkeit[1] -= 0.01;
+				SollGeschwindigkeit[0] -= 0.01;
 				break;
 
 			case 'a':// turn left
-				KeyboardControl::SollGeschwindigkeit[1] -= 0.005;//left wheel
-				KeyboardControl::SollGeschwindigkeit[0] += 0.005;//right wheel
 				
+
 				printw("%c\n", Eingabe);
 				printw("Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n", 
 						SollGeschwindigkeit[1], SollGeschwindigkeit[0]);
 				printw("Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n", 
 						IstGeschwindigkeit[1], IstGeschwindigkeit[0]);
+				KeyboardControl::SollGeschwindigkeit[1] -= 0.005;//left wheel
+				KeyboardControl::SollGeschwindigkeit[0] += 0.005;//right wheel
 				break;
 
 			case 'd':
 				
-				KeyboardControl::SollGeschwindigkeit[1] += 0.005;
-				KeyboardControl::SollGeschwindigkeit[0] -= 0.005;
 				printw("%c\n", Eingabe);
 				printw("Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n", 
 						SollGeschwindigkeit[1], SollGeschwindigkeit[0]);
 				printw("Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n", 
 						IstGeschwindigkeit[1], IstGeschwindigkeit[0]);
+				KeyboardControl::SollGeschwindigkeit[1] += 0.005;
+				KeyboardControl::SollGeschwindigkeit[0] -= 0.005;
 				break;
 
 			case 'b':
@@ -107,13 +111,21 @@ void KeyboardControl::Communicate()
 				break;
 
 			case 'q':
-				KeyboardControl::SollGeschwindigkeit[0] = 0;
-				KeyboardControl::SollGeschwindigkeit[1] = 0;
+				SollGeschwindigkeit[0] = 0;
+				SollGeschwindigkeit[1] = 0;
 				printw("%c\n", Eingabe);
 				printw("Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n", 
 						SollGeschwindigkeit[1], SollGeschwindigkeit[0]);
 				printw("Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n", 
 						IstGeschwindigkeit[1], IstGeschwindigkeit[0]);
+				break;
+			default:
+				double a = std::abs(SollGeschwindigkeit[0]);
+				if(std::abs(SollGeschwindigkeit[0])){
+					SollGeschwindigkeit[0] = SollGeschwindigkeit[1];
+				}else{
+					SollGeschwindigkeit[1] = SollGeschwindigkeit[2];
+				}
 				break;
 			}
 			if (Eingabe == 'q')
