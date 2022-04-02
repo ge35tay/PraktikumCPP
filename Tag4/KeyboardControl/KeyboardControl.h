@@ -20,7 +20,7 @@ class KeyboardControl
 {
 public:
 	KeyboardControl();
-	//~KeyboardControl();
+	~KeyboardControl(){};
 	void Communicate();
 	void Step();
 	static void transferFunction();

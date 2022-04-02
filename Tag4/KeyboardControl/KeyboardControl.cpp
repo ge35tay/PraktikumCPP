@@ -10,9 +10,9 @@
 #include "KeyboardControl.h"
 #include "InterfaceSIM.h"
 
-
 // unbekannt Initialization
-KeyboardControl::KeyboardControl(){
+KeyboardControl::KeyboardControl()
+{
 	Sollwert[0] = 1500;
 	Sollwert[1] = 1500;
 	interface.Initialize(0.04, transferFunction);
@@ -20,114 +20,108 @@ KeyboardControl::KeyboardControl(){
 };
 
 // Erstellen der Communicate-Methode
-void KeyboardControl::Communicate(){
+void KeyboardControl::Communicate()
+{
 	initscr();
 	sigprocmask(SIG_UNBLOCK, &interface.mask, nullptr);
 	printw("Welcome to this unstable control \n");
 	nodelay(stdscr, TRUE);
 	noecho();
 
-	while(1){
+	while (1)
+	{
 		char Eingabe = getch();
-		if (Eingabe != ERR){
+		if (Eingabe != ERR)
+		{
 			clear();
-			switch(Eingabe)
+			switch (Eingabe)
 			{
-			case 'w':
-				KeyboardControl::SollGeschwindigkeit[0] += 0.01;
-				KeyboardControl::SollGeschwindigkeit[1] += 0.01;
-				if (SollGeschwindigkeit[0] > 0.5){
-					SollGeschwindigkeit[0] = 0.5;
-				}
-				if (SollGeschwindigkeit[1] > 0.5){
-					SollGeschwindigkeit[1] = 0.5;
-				}
-				printw("%c \n", Eingabe);
-				printw("Soll-Geschwindigkeit links: %lf ", SollGeschwindigkeit[1]);
-				printw("Soll-Geschwindigkeit rechts: %lf\n", SollGeschwindigkeit[0]);
-				printw("Ist-Geschwindigkeit links: %lf ", IstGeschwindigkeit[1]);
-				printw("Ist-Geschwindigkeit rechts: %lf\n", IstGeschwindigkeit[0]);
+			case 'w'://forwards
+				// if (SollGeschwindigkeit[0] > 0.49)
+				// {
+				// 	SollGeschwindigkeit[0] = 0.5;
+				// }
+				// else
+				// {
+				// 	SollGeschwindigkeit[0] += 0.01;
+				// }
+
+				// if (SollGeschwindigkeit[1] > 0.49)
+				// {
+				// 	SollGeschwindigkeit[1] = 0.5;
+				// }
+				// else
+				// {
+				// 	SollGeschwindigkeit[1] += 0.01;
+				// }
+				
+				printw("%c\n", Eingabe);
+				printw("Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n", 
+						SollGeschwindigkeit[1], SollGeschwindigkeit[0]);
+				printw("Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n", 
+						IstGeschwindigkeit[1], IstGeschwindigkeit[0]);
+
+				SollGeschwindigkeit[1] += 0.01;
+				SollGeschwindigkeit[0] += 0.01;
 				break;
-			case 's':
-				KeyboardControl::SollGeschwindigkeit[0] -= 0.01;
-				KeyboardControl::SollGeschwindigkeit[1] -= 0.01;
-				if (SollGeschwindigkeit[0] < -0.5){
-					SollGeschwindigkeit[0] = -0.5;
-				}
-				if (SollGeschwindigkeit[1] < -0.5){
-					SollGeschwindigkeit[1] = -0.5;
-				}
-				printw("%c \n", Eingabe);
-				printw("Soll-Geschwindigkeit links: %lf ", SollGeschwindigkeit[1]);
-				printw("Soll-Geschwindigkeit rechts: %lf\n", SollGeschwindigkeit[0]);
-				printw("Ist-Geschwindigkeit links: %lf ", IstGeschwindigkeit[1]);
-				printw("Ist-Geschwindigkeit rechts: %lf\n", IstGeschwindigkeit[0]);
+
+
+			case 's'://backwords
+				printw("%c\n", Eingabe);
+				printw("Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n", 
+						SollGeschwindigkeit[1], SollGeschwindigkeit[0]);
+				printw("Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n", 
+						IstGeschwindigkeit[1], IstGeschwindigkeit[0]);
 				break;
-			case 'a':
-				KeyboardControl::SollGeschwindigkeit[0] += 0.005;
-				KeyboardControl::SollGeschwindigkeit[1] -= 0.005;
-				if (SollGeschwindigkeit[0] < -0.5){
-					SollGeschwindigkeit[0] = -0.5;
-				}
-				if (SollGeschwindigkeit[1] < -0.5){
-					SollGeschwindigkeit[1] = -0.5;
-				}
-				if (SollGeschwindigkeit[0] > 0.5){
-					SollGeschwindigkeit[0] = 0.5;
-				}
-				if (SollGeschwindigkeit[1] > 0.5){
-					SollGeschwindigkeit[1] = 0.5;
-				}
-				printw("%c \n", Eingabe);
-				printw("Soll-Geschwindigkeit links: %lf ", SollGeschwindigkeit[1]);
-				printw("Soll-Geschwindigkeit rechts: %lf\n", SollGeschwindigkeit[0]);
-				printw("Ist-Geschwindigkeit links: %lf ", IstGeschwindigkeit[1]);
-				printw("Ist-Geschwindigkeit rechts: %lf\n", IstGeschwindigkeit[0]);
+
+			case 'a':// turn left
+				KeyboardControl::SollGeschwindigkeit[1] -= 0.005;//left wheel
+				KeyboardControl::SollGeschwindigkeit[0] += 0.005;//right wheel
+				
+				printw("%c\n", Eingabe);
+				printw("Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n", 
+						SollGeschwindigkeit[1], SollGeschwindigkeit[0]);
+				printw("Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n", 
+						IstGeschwindigkeit[1], IstGeschwindigkeit[0]);
 				break;
+
 			case 'd':
-				KeyboardControl::SollGeschwindigkeit[0] -= 0.005;
+				
 				KeyboardControl::SollGeschwindigkeit[1] += 0.005;
-				if (SollGeschwindigkeit[0] < -0.5){
-					SollGeschwindigkeit[0] = -0.5;
-				}
-				if (SollGeschwindigkeit[1] < -0.5){
-					SollGeschwindigkeit[1] = -0.5;
-				}
-				if (SollGeschwindigkeit[0] > 0.5){
-					SollGeschwindigkeit[0] = 0.5;
-				}
-				if (SollGeschwindigkeit[1] > 0.5){
-					SollGeschwindigkeit[1] = 0.5;
-				}
-				printw("%c \n", Eingabe);
-				printw("Soll-Geschwindigkeit links: %lf ", SollGeschwindigkeit[1]);
-				printw("Soll-Geschwindigkeit rechts: %lf\n", SollGeschwindigkeit[0]);
-				printw("Ist-Geschwindigkeit links: %lf ", IstGeschwindigkeit[1]);
-				printw("Ist-Geschwindigkeit rechts: %lf\n", IstGeschwindigkeit[0]);
+				KeyboardControl::SollGeschwindigkeit[0] -= 0.005;
+				printw("%c\n", Eingabe);
+				printw("Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n", 
+						SollGeschwindigkeit[1], SollGeschwindigkeit[0]);
+				printw("Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n", 
+						IstGeschwindigkeit[1], IstGeschwindigkeit[0]);
 				break;
+
 			case 'b':
 				KeyboardControl::SollGeschwindigkeit[0] = 0;
 				KeyboardControl::SollGeschwindigkeit[1] = 0;
-				printw("%c \n", Eingabe);
-				printw("Soll-Geschwindigkeit links: %lf ", SollGeschwindigkeit[1]);
-				printw("Soll-Geschwindigkeit rechts: %lf\n", SollGeschwindigkeit[0]);
-				printw("Ist-Geschwindigkeit links: %lf ", IstGeschwindigkeit[1]);
-				printw("Ist-Geschwindigkeit rechts: %lf\n", IstGeschwindigkeit[0]);
+				printw("%c\n", Eingabe);
+				printw("Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n", 
+						SollGeschwindigkeit[1], SollGeschwindigkeit[0]);
+				printw("Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n", 
+						IstGeschwindigkeit[1], IstGeschwindigkeit[0]);
 				break;
+
 			case 'q':
 				KeyboardControl::SollGeschwindigkeit[0] = 0;
 				KeyboardControl::SollGeschwindigkeit[1] = 0;
-				printw("%c \n", Eingabe);
-				printw("Soll-Geschwindigkeit links: %lf ", SollGeschwindigkeit[1]);
-				printw("Soll-Geschwindigkeit rechts: %lf\n", SollGeschwindigkeit[0]);
-				printw("Ist-Geschwindigkeit links: %lf ", IstGeschwindigkeit[1]);
-				printw("Ist-Geschwindigkeit rechts: %lf\n", IstGeschwindigkeit[0]);
+				printw("%c\n", Eingabe);
+				printw("Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n", 
+						SollGeschwindigkeit[1], SollGeschwindigkeit[0]);
+				printw("Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n", 
+						IstGeschwindigkeit[1], IstGeschwindigkeit[0]);
 				break;
 			}
-			if(Eingabe == 'q') break;
+			if (Eingabe == 'q')
+				break;
 		}
 	}
-	while(IstGeschwindigkeit[0] != 0 || IstGeschwindigkeit[1] != 0 ){
+	while (IstGeschwindigkeit[0] != 0 || IstGeschwindigkeit[1] != 0)
+	{
 		clear();
 		printw("Soll-Geschwindigkeit links: %lf ", SollGeschwindigkeit[1]);
 		printw("Soll-Geschwindigkeit rechts: %lf\n", SollGeschwindigkeit[0]);
@@ -136,12 +130,29 @@ void KeyboardControl::Communicate(){
 	}
 	sigprocmask(SIG_BLOCK, &interface.mask, nullptr);
 	endwin();
-
 }
 
-void KeyboardControl::Step(){
+void KeyboardControl::Step()
+{
 	IstGeschwindigkeit[0] = *interface.GetInput();
 	IstGeschwindigkeit[1] = *(interface.GetInput() + 1);
+
+	if(SollGeschwindigkeit[0]>0.5){
+		SollGeschwindigkeit[0]=0.5;
+	}
+
+	if(SollGeschwindigkeit[1]>0.5){
+		SollGeschwindigkeit[1]=0.5;
+	}
+
+	if(SollGeschwindigkeit[0]<-0.5){
+		SollGeschwindigkeit[0]=-0.5;
+	}
+
+	if(SollGeschwindigkeit[0]<-0.5){
+		SollGeschwindigkeit[0]=-0.5;
+	}
+
 	Regeler1.CalculateU(SollGeschwindigkeit[0], IstGeschwindigkeit[0]);
 	Regeler2.CalculateU(SollGeschwindigkeit[1], IstGeschwindigkeit[1]);
 	Sollwert[0] = Regeler1.GetU() + 1500;
@@ -149,7 +160,8 @@ void KeyboardControl::Step(){
 	interface.SetOutputs(Sollwert);
 }
 
-void KeyboardControl::transferFunction(){
-	transferPointer -> Step();
+void KeyboardControl::transferFunction()
+{
+	transferPointer->Step();
 }
-KeyboardControl* KeyboardControl::transferPointer;
+KeyboardControl *KeyboardControl::transferPointer;
