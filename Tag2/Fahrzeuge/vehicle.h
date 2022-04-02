@@ -4,7 +4,7 @@
  *  Created on: 29.03.2022
  *      Author: Yinghan Huang
  */
-
+#include <string>
 #ifndef VEHICLE_H_
 #define VEHICLE_H_
 
@@ -19,9 +19,9 @@ public:
 	vehicle(double Preis, int Baujahr, Farbe farbe);
 
 	int m_ID;
-	void getFarbe();
+	std::string getFarbe();
 	int getBaujahr();
-	static int getID();
+	int getID();
 	double getPreis();
 	static bool isOLdtimer(vehicle v1);
 
