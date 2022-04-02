@@ -2,7 +2,7 @@
  * KeyboardControl.cpp
  *
  *  Created on: 31.03.2022
- *      Author: Yinghan Huang
+ *      Author: Yinghan Huang Zhishen Zhang
  */
 
 #include <cmath>
