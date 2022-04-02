@@ -28,21 +28,21 @@ vehicle::vehicle(double Preis, int Baujahr, Farbe Farbe){
 	m_preis = Preis;
 }
 
-void vehicle::getFarbe(){
+std::string vehicle::getFarbe(){
 	if(m_Farbe==1){
-		std::cout << "Blau" << std::endl;
+		return "Blau";
 	}
 	else if(m_Farbe==2){
-		std::cout << "Rot" << std::endl;
+		return "Rot";
 	}
 	else if(m_Farbe==3){
-		std::cout << "Grün" << std::endl;
+		return "Grün";
 	}
 	else if(m_Farbe==4){
-		std::cout << "Weiß" << std::endl;
+		return "Weiß";
 	}
 	else if(m_Farbe==5){
-		std::cout << "Schwarz" << std::endl;
+		return "Schwarz";
 	}
 }
 
