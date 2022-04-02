@@ -31,7 +31,7 @@ int main() {
 			
 			eingabelist.push_back(Eingabe);
 			clear();
-			printw("Eingabe ist: %c", Eingabe);
+			printw("Eingabe ist: %c\n", Eingabe);
 		}
 	}
 	
