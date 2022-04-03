@@ -7,162 +7,169 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <unistd.h>
+#include <mutex>
 #include "ncurses.h"
 #include "KeyboardControl.h"
 #include "InterfaceSIM.h"
 
 // unbekannt Initialization
-KeyboardControl::KeyboardControl()
-{
+KeyboardControl::KeyboardControl() {
 	Sollwert[0] = 1500;
 	Sollwert[1] = 1500;
 	interface.Initialize(0.04, transferFunction);
 	transferPointer = this;
-};
+}
+;
 
 // Erstellen der Communicate-Methode
-void KeyboardControl::Communicate()
-{
+void KeyboardControl::Communicate() {
 	initscr();
 	sigprocmask(SIG_UNBLOCK, &interface.mask, nullptr);
 	printw("Welcome to this unstable control \n");
 	nodelay(stdscr, TRUE);
 	noecho();
+	char Eingabe;
 
-	while (1)
-	{
-		char Eingabe = getch();
-		if (Eingabe != ERR)
-		{
-			clear();
-			switch (Eingabe)
-			{
-			case 'w'://forwards
-				// if (SollGeschwindigkeit[0] > 0.49)
-				// {
-				// 	SollGeschwindigkeit[0] = 0.5;
-				// }
-				// else
-				// {
-				// 	SollGeschwindigkeit[0] += 0.01;
-				// }
-
-				// if (SollGeschwindigkeit[1] > 0.49)
-				// {
-				// 	SollGeschwindigkeit[1] = 0.5;
-				// }
-				// else
-				// {
-				// 	SollGeschwindigkeit[1] += 0.01;
-				// }
-				
+	while (1) {
+		Eingabe = '\0';
+		Eingabe = getch();
+		clear();
+		usleep(50000);
+		if (Eingabe != ERR) {
+			switch (Eingabe) {
+			case 'w':
 				printw("%c\n", Eingabe);
-				printw("Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n", 
+				printw(
+						"Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n",
 						SollGeschwindigkeit[1], SollGeschwindigkeit[0]);
-				printw("Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n", 
+				printw(
+						"Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n",
 						IstGeschwindigkeit[1], IstGeschwindigkeit[0]);
 
 				SollGeschwindigkeit[1] += 0.01;
 				SollGeschwindigkeit[0] += 0.01;
 				break;
 
-
-			case 's'://backwords
+			case 's': //backwords
 				printw("%c\n", Eingabe);
-				printw("Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n", 
+				printw(
+						"Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n",
 						SollGeschwindigkeit[1], SollGeschwindigkeit[0]);
-				printw("Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n", 
+				printw(
+						"Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n",
 						IstGeschwindigkeit[1], IstGeschwindigkeit[0]);
 				SollGeschwindigkeit[1] -= 0.01;
 				SollGeschwindigkeit[0] -= 0.01;
 				break;
 
-			case 'a':// turn left
-				
+			case 'a': // turn left
 
 				printw("%c\n", Eingabe);
-				printw("Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n", 
+				printw(
+						"Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n",
 						SollGeschwindigkeit[1], SollGeschwindigkeit[0]);
-				printw("Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n", 
+				printw(
+						"Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n",
 						IstGeschwindigkeit[1], IstGeschwindigkeit[0]);
-				KeyboardControl::SollGeschwindigkeit[1] -= 0.005;//left wheel
-				KeyboardControl::SollGeschwindigkeit[0] += 0.005;//right wheel
+				SollGeschwindigkeit[1] -= 0.005; //left wheel
+				SollGeschwindigkeit[0] += 0.005; //right wheel
 				break;
 
 			case 'd':
-				
+
 				printw("%c\n", Eingabe);
-				printw("Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n", 
+				printw(
+						"Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n",
 						SollGeschwindigkeit[1], SollGeschwindigkeit[0]);
-				printw("Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n", 
+				printw(
+						"Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n",
 						IstGeschwindigkeit[1], IstGeschwindigkeit[0]);
-				KeyboardControl::SollGeschwindigkeit[1] += 0.005;
-				KeyboardControl::SollGeschwindigkeit[0] -= 0.005;
+				SollGeschwindigkeit[1] += 0.005;
+				SollGeschwindigkeit[0] -= 0.005;
 				break;
 
 			case 'b':
-				KeyboardControl::SollGeschwindigkeit[0] = 0;
-				KeyboardControl::SollGeschwindigkeit[1] = 0;
+
 				printw("%c\n", Eingabe);
-				printw("Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n", 
+				printw(
+						"Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n",
 						SollGeschwindigkeit[1], SollGeschwindigkeit[0]);
-				printw("Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n", 
+				printw(
+						"Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n",
 						IstGeschwindigkeit[1], IstGeschwindigkeit[0]);
+				SollGeschwindigkeit[0] = 0;
+				SollGeschwindigkeit[1] = 0;
 				break;
 
 			case 'q':
 				SollGeschwindigkeit[0] = 0;
 				SollGeschwindigkeit[1] = 0;
 				printw("%c\n", Eingabe);
-				printw("Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n", 
+				printw(
+						"Soll-Geschwindigkeit links: \t%lf Soll-Geschwindigkeit rechts: \t%lf\n",
 						SollGeschwindigkeit[1], SollGeschwindigkeit[0]);
-				printw("Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n", 
+				printw(
+						"Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n",
 						IstGeschwindigkeit[1], IstGeschwindigkeit[0]);
 				break;
-			default:
-				double a = std::abs(SollGeschwindigkeit[0]);
-				if(std::abs(SollGeschwindigkeit[0])){
-					SollGeschwindigkeit[0] = SollGeschwindigkeit[1];
-				}else{
-					SollGeschwindigkeit[1] = SollGeschwindigkeit[2];
-				}
-				break;
+
 			}
-			if (Eingabe == 'q')
-				break;
+			if (Eingabe == 'q'){
+			clear();
+			printw("%c\n", Eingabe);
+			break;
+			}
+
+		}else {
+//			printw("NO KEY\n");
+			if (std::abs(SollGeschwindigkeit[0])
+					> std::abs(SollGeschwindigkeit[1])) {
+
+				SollGeschwindigkeit[0] = SollGeschwindigkeit[1];
+			} else {
+				SollGeschwindigkeit[1] = SollGeschwindigkeit[0];
+			}
+			printw("Soll-Geschwindigkeit links: %lf ", SollGeschwindigkeit[1]);
+			printw("Soll-Geschwindigkeit rechts: %lf\n", SollGeschwindigkeit[0]);
+			printw("Ist-Geschwindigkeit links: %lf ", IstGeschwindigkeit[1]);
+			printw("Ist-Geschwindigkeit rechts: %lf\n", IstGeschwindigkeit[0]);
 		}
 	}
-	while (IstGeschwindigkeit[0] != 0 || IstGeschwindigkeit[1] != 0)
-	{
-		clear();
-		printw("Soll-Geschwindigkeit links: %lf ", SollGeschwindigkeit[1]);
-		printw("Soll-Geschwindigkeit rechts: %lf\n", SollGeschwindigkeit[0]);
-		printw("Ist-Geschwindigkeit links: %lf ", IstGeschwindigkeit[1]);
-		printw("Ist-Geschwindigkeit rechts: %lf\n", IstGeschwindigkeit[0]);
-	}
-	sigprocmask(SIG_BLOCK, &interface.mask, nullptr);
 	endwin();
+	std::mutex m2;
+	m2.lock();
+	while (counter<10) {
+		SollGeschwindigkeit[0] = 0;
+		SollGeschwindigkeit[1] = 0;
+		if(std::abs(IstGeschwindigkeit[0])+std::abs(IstGeschwindigkeit[1]) < 0.01){
+			counter ++;
+		}
+		usleep(100000);
+	}
+	m2.unlock();
 }
 
-void KeyboardControl::Step()
-{
+void KeyboardControl::Step() {
+	std::mutex m;
+	m.lock();
 	IstGeschwindigkeit[0] = *interface.GetInput();
 	IstGeschwindigkeit[1] = *(interface.GetInput() + 1);
 
-	if(SollGeschwindigkeit[0]>0.5){
-		SollGeschwindigkeit[0]=0.5;
+	if (SollGeschwindigkeit[0] > 0.5) {
+		SollGeschwindigkeit[0] = 0.5;
 	}
 
-	if(SollGeschwindigkeit[1]>0.5){
-		SollGeschwindigkeit[1]=0.5;
+	if (SollGeschwindigkeit[1] > 0.5) {
+		SollGeschwindigkeit[1] = 0.5;
 	}
 
-	if(SollGeschwindigkeit[0]<-0.5){
-		SollGeschwindigkeit[0]=-0.5;
+	if (SollGeschwindigkeit[0] < -0.5) {
+		SollGeschwindigkeit[0] = -0.5;
 	}
 
-	if(SollGeschwindigkeit[0]<-0.5){
-		SollGeschwindigkeit[0]=-0.5;
+	if (SollGeschwindigkeit[0] < -0.5) {
+		SollGeschwindigkeit[0] = -0.5;
 	}
 
 	Regeler1.CalculateU(SollGeschwindigkeit[0], IstGeschwindigkeit[0]);
@@ -170,10 +177,10 @@ void KeyboardControl::Step()
 	Sollwert[0] = Regeler1.GetU() + 1500;
 	Sollwert[1] = Regeler2.GetU() + 1500;
 	interface.SetOutputs(Sollwert);
+	m.unlock();
 }
 
-void KeyboardControl::transferFunction()
-{
+void KeyboardControl::transferFunction() {
 	transferPointer->Step();
 }
 KeyboardControl *KeyboardControl::transferPointer;
