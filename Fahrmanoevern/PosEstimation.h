@@ -8,16 +8,21 @@
 #ifndef POSESTIMATION_H_
 #define POSESTIMATION_H_
 
+#include <cmath>
+#include "iostream"
+
 class PosEstimation
 {
 private:
 	double x[3];    // position
-	double dVelAverage;   //
+	double dVelAverage;   // mittleren Geschwindigkeit, constant in einen interval T.
+	double T;       // Zeitschrittlänge
 public:
 	PosEstimation();
-	void Reset();
-	void PredictPosition(double dSpeedR, double dSpeedL, double dTimestep);
-	double GetPosition();
+	~PosEstimation();
+	void Reset();    //Koordinatenursprung zurückgesetzt
+	void PredictPosition(double dSpeedR, double dSpeedL, double dTimestep);   // die Aktuelle Position und die Raumrichtung
+	double * GetPosition();      // Addresse des Ergebnisarrays zurück, x,y positionen und aktuelle Winkel
 };
 
 
