@@ -67,6 +67,14 @@
         "utility": "cpp",
         "vector": "cpp",
         "filesystem": "cpp",
-        "csignal": "cpp"
+        "csignal": "cpp",
+        "*.tcc": "cpp",
+        "condition_variable": "cpp",
+        "map": "cpp",
+        "memory_resource": "cpp",
+        "numeric": "cpp",
+        "random": "cpp",
+        "thread": "cpp",
+        "cinttypes": "cpp"
     }
 }

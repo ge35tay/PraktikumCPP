@@ -14,7 +14,7 @@
 class PosEstimation
 {
 private:
-	double x[3];    // position
+	double x[3];    // positionx x[2] is the angel between x and the heading
 	double dVelAverage;   // mittleren Geschwindigkeit, constant in einen interval T.
 	double T;       // Zeitschrittlänge
 public:

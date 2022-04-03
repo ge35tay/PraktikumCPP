@@ -25,7 +25,7 @@ private:
 		{
 			dX = X;
 			dY = Y;
-			dV = v;
+			dV = V;
 		}
 	};                                  // Coord: X,Y,V
 
@@ -33,8 +33,8 @@ private:
 	std::list<Coord>::iterator iter;
 	bool blsRunning;					// to see if the robot is running
 	double adWishSpeed[2];				// Expected Speed, sum of rotation part and translation part.
-	double dMaxSpeed;
-	double dPosDifference;              // difference from true value
+	double dMaxSpeed = 0.5;				//die Wunschgeschwindigkeiten darf den Maximalbetrag von 0,5 m/s nicht uebersteigen.
+	double dPosDifference = 0.02;       // difference from true value is set to 2 cm 
 
 public:
 	Maneuver();

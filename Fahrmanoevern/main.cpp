@@ -6,7 +6,9 @@
  */
 
 #include "PosEstimation.h"
-#include "fstream"
+#include "Maneuver.h"
+#include <fstream>
+
 
 int main(){
 	double SpeedR, SpeedL, T;   // for estimation
@@ -14,7 +16,7 @@ int main(){
 	PosEstimation PosE;
 	std::fstream File_pos, File_result;
 	double * coord;
-	int flag;
+	int flag = 0;
 
 	File_pos.open("PosEstimationInput.txt", std::ios::in);  // read only
 	File_result.open("PosEstimationVgl.txt", std::ios::in);	// read only
@@ -46,6 +48,14 @@ int main(){
 	else{
 		std::cout << "Your estimation is intersting \n" << std::endl;
 	}
+
+
+	Maneuver maneuver8, maneuverO;
+	maneuverO.CalcCircle(2.0,0.3,0.04);
+	maneuverO.Loglist("LogFileCircle.txt");
+	maneuver8.CalcEight(5.0,1.0,10.0);
+	maneuver8.Loglist("LogFileEight.txt");
+
 	return 0;
 }
 
