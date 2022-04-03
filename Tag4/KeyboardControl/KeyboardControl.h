@@ -32,8 +32,8 @@ private:
 	InterfaceSIM interface;
 	int Sollwert[2];
 	int counter = 0;
-	PIDController Regeler1 = PIDController(1000.0, 12.0, 0.1, 0.5);
-	PIDController Regeler2 = PIDController(1000.0, 12.0, 0.1, 0.5);
+	PIDController Regeler1 = PIDController(1000.0, 10.0, 0.1, 0.5);
+	PIDController Regeler2 = PIDController(1000.0, 10.0, 0.1, 0.5);
 };
 
 
