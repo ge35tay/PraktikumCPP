@@ -1,17 +1,16 @@
-/*
- * Maneuver.h
- *
- *  Created on: 03.04.2022
- *      Author: Yinghan Huang
+/**
+ * @file RobotControl.h
+ * @author Yinghan Huang and Zhishen Zhang
+ * @brief 
+ * @version 0.1
+ * @date 2022-04-03
+ * 
+ * @copyright Copyright (c) 2022
+ * 
  */
-// g++ PIDController.h PIDController.cpp Maneuver.h Maneuver.cpp PosEstimation.h PosEstimation.cpp RobotControl.h RobotControl.cpp main.cpp
 #ifndef ROBOTCONTROL_ 
 #define ROBOTCONTROL_
 
-#include <iostream>
-#include <cmath>
-#include <list>
-#include <string>
 #include "InterfaceSIM.h"
 #include "Maneuver.h"
 #include "PosEstimation.h"
@@ -23,14 +22,18 @@ private:
 	InterfaceSIM interface;
 	Maneuver maneuver;
 	PosEstimation posEstimation;
-	PIDController motorR;
-	PIDController motorL;
+	PIDController motorR = PIDController(500,100,0,0.4);
+	PIDController motorL = PIDController(500,100,0,0.4);
 	bool bIsActive;
+	int iMicros[2];
+	double current_speed[2];
+	double timeStep = 0.04;
+
 
 public:
 	RobotControl();
 	~RobotControl(){};
-	static RobotControl* transferPointer();
+	static RobotControl* transferPointer;
 	static void transferFunction();
 	bool isActive();
 	void Step();

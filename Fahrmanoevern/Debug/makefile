@@ -8,6 +8,8 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include .metadata/.plugins/org.eclipse.cdt.managedbuilder.core/subdir.mk
+-include .metadata/.plugins/org.eclipse.cdt.make.core/subdir.mk
 -include subdir.mk
 -include objects.mk
 
@@ -43,7 +45,7 @@ all: Fahrmanoevern
 Fahrmanoevern: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
-	g++  -o "Fahrmanoevern" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -L/home/pi/RaspberryLibs/include/ncurses -o "Fahrmanoevern" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

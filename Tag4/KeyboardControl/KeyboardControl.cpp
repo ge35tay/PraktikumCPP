@@ -113,29 +113,6 @@ void KeyboardControl::Communicate() {
 						"Ist-Geschwindigkeit links: \t%lf  Ist-Geschwindigkeit rechts: \t%lf\n",
 						IstGeschwindigkeit[1], IstGeschwindigkeit[0]);
 				break;
-<<<<<<< Updated upstream
-
-			}
-			if (Eingabe == 'q'){
-			clear();
-			printw("%c\n", Eingabe);
-			break;
-			}
-
-		}else {
-//			printw("NO KEY\n");
-			if (std::abs(SollGeschwindigkeit[0])
-					> std::abs(SollGeschwindigkeit[1])) {
-
-				SollGeschwindigkeit[0] = SollGeschwindigkeit[1];
-			} else {
-				SollGeschwindigkeit[1] = SollGeschwindigkeit[0];
-			}
-			printw("Soll-Geschwindigkeit links: %lf ", SollGeschwindigkeit[1]);
-			printw("Soll-Geschwindigkeit rechts: %lf\n", SollGeschwindigkeit[0]);
-			printw("Ist-Geschwindigkeit links: %lf ", IstGeschwindigkeit[1]);
-			printw("Ist-Geschwindigkeit rechts: %lf\n", IstGeschwindigkeit[0]);
-=======
 //			default:
 //				double a = std::abs(SollGeschwindigkeit[0]);
 
@@ -149,9 +126,9 @@ void KeyboardControl::Communicate() {
 				SollGeschwindigkeit[1] = SollGeschwindigkeit[2];
 			};
 
->>>>>>> Stashed changes
 		}
 	}
+	sigprocmask(SIG_BLOCK, &interface.mask, nullptr);
 	endwin();
 	std::mutex m2;
 	m2.lock();
