@@ -8,7 +8,10 @@
 #include <fstream>
 #include <iostream>
 
-Maneuver::Maneuver(){};
+Maneuver::Maneuver(){
+	adWishSpeed[0] = 0;
+	adWishSpeed[1] = 0;
+};
 
 void Maneuver::CalcCircle(double Radius, double Speed, double Timestep){
     Coordlist.clear();
@@ -18,7 +21,7 @@ void Maneuver::CalcCircle(double Radius, double Speed, double Timestep){
         Maneuver::Coord Round_coord = Maneuver::Coord(x, y, Speed);
         Coordlist.push_back(Round_coord);
     }
-    iter = Coordlist.begin();
+    //iter = Coordlist.begin();
 }
 
 
@@ -27,21 +30,21 @@ void Maneuver::CalcEight(double dRadius, double dSpeed, double dTimestep){
     Coordlist.clear();
     for(int counter=1; counter < (int)((2 * M_PI) /((dSpeed / dRadius) * dTimestep)); counter++){
 
-        double x = dRadius*sin(counter*dSpeed*dTimestep);
-        double y = dRadius*(1-cos(counter*dSpeed*dTimestep));
+        double x = dRadius*sin(counter*dSpeed*dTimestep/dRadius);
+        double y = dRadius*(1-cos(counter*dSpeed*dTimestep/dRadius));
         Maneuver::Coord this_coord =  Maneuver::Coord(x, y,dSpeed);
         Coordlist.push_back(this_coord);
     }
     //under circle
     for(int counter=1; counter < (int)((2 * M_PI) /((dSpeed / dRadius) * dTimestep)); counter++){
         
-        double x = dRadius*sin(counter*dSpeed*dTimestep);
-        double y = -dRadius*(1-cos(counter*dSpeed*dTimestep));
+        double x = dRadius*sin(counter*dSpeed*dTimestep/dRadius);
+        double y = -dRadius*(1-cos(counter*dSpeed*dTimestep/dRadius));
         Maneuver::Coord this_coord =  Maneuver::Coord(x, y, dSpeed);
         Coordlist.push_back(this_coord);
 
     }
-    iter = Coordlist.begin();
+    //iter = Coordlist.begin();
 
 };
 
@@ -92,74 +95,78 @@ void Maneuver::Proceed(){
 
 void Maneuver::CalcManeuverSpeed(double dX, double dY, double dW){
 
-
-    // check if the soll position is reached:
-    if( sqrt(pow((iter->dX - dX), 2) + pow((iter->dY - dY), 2) * 1.0) <dPosDifference){
-    	iter++;
-    }
     
-    if(iter == Coordlist.end()){
-        adWishSpeed[0] = 0.0;
-        adWishSpeed[1] = 0.0;
-        stop();
-    }else{
+
+    if(iter!= Coordlist.end()){
+    	// check if the soll position is reached:
         //Winkeld zwischen soll und Akt berechnen
         //soll - akt
-        double phi = atan2((iter->dY-dY), (iter->dX-dX));
+    	if(sqrt(pow((iter->dX - dX), 2) + pow((iter->dY - dY), 2)) > dPosDifference)
+    	{
+    		double phi = atan2((iter->dY-dY), (iter->dX-dX));
 
-        //4. Winkeldifferenzberechnen:
-        double deltaPhi = phi - dW;
+    		//4. Winkeldifferenzberechnen:
+    		double deltaPhi = phi - dW;
+    		 //5. Winkeldifferenzauf]-M_PI,M_PI]begrenzen:
+    		if(deltaPhi > M_PI){
+    			deltaPhi -= 2*M_PI;
+    		}
+    		if(deltaPhi <= -M_PI){
+    		    deltaPhi += 2*M_PI;
+    		}
+    		 // 6. Rotationsanteilbestimmen
+    		 double dRot = 2*deltaPhi;
+    		 if(dRot > 0.5){
+    			 dRot = 0.5;
+    		 }
+    		 if(dRot < -0.5){
+    		     dRot = -0.5;
+    		 }
+    		 // 7. Translationsanteilübernehmen:
+    		 double dTra = iter->dV;
 
-        //5. Winkeldifferenzauf]-M_PI,M_PI]begrenzen:
-        while(deltaPhi > M_PI){
-            deltaPhi -= M_PI;
-        }
-        while(deltaPhi <= -M_PI){
-            deltaPhi += M_PI;
-        }
+    		 // 8. Geschwindigkeitsanteileüberprüfen:
+    		 if(dTra*dRot>0){
 
-        // 6. Rotationsanteilbestimmen
-        double dRot = 2*deltaPhi;
-        if(dRot > 0.5){
-            dRot = 0.5;
-        }
-        if(dRot < -0.5){
-            dRot = -0.5;
-        }
+    			 if(dTra + dRot > dMaxSpeed){
+    				 dTra = dMaxSpeed - dRot;
+    		     }
+    			 if(dTra + dRot < -dMaxSpeed){
+    		         dTra = -dMaxSpeed - dRot;
+    		     }
 
-        // 7. Translationsanteilübernehmen:
-        double dTra = iter->dV;
+    		 }
+    		 if(dTra*dRot<0){
 
-        // 8. Geschwindigkeitsanteileüberprüfen:
-        if(dTra*dRot>0){
+    			 if(dTra - dRot > dMaxSpeed){
+    				 dTra = dMaxSpeed + dRot;
+    		     }
+    			 if(dTra - dRot < -dMaxSpeed){
+    		         dTra = -dMaxSpeed + dRot;
+    		     }
 
-            if(dTra + dRot > dMaxSpeed){
-                dTra = dMaxSpeed - dRot;
-            }else if(dTra + dRot < -dMaxSpeed){
-                dTra = -dMaxSpeed - dRot;
-            }
-
-        }
-        else if(dTra*dRot<0){
-
-            if(dTra - dRot > dMaxSpeed){
-                dTra = dMaxSpeed + dRot;
-            }else if(dTra - dRot < -dMaxSpeed){
-                dTra = -dMaxSpeed + dRot;
-            }
-
-        }
-        // 9.Geschwindigkeiten summieren:
-        adWishSpeed[0] = dTra + dRot;
-        adWishSpeed[1] = dTra - dRot;
-
+    		 }
+    		         // 9.Geschwindigkeiten summieren:
+    		 adWishSpeed[0] = dTra + dRot;
+    		 adWishSpeed[1] = dTra - dRot;
+    	}
+    	else{
+    		iter ++;
+    	}
     }
+    if(iter == Coordlist.end()){
+    	adWishSpeed[0] = 0.0;
+    	adWishSpeed[1] = 0.0;
+    	stop();
+    	printw("list out");
+    }
+
 }
 
 
 
 
 double * Maneuver::GetManeuverSpeed(){
-
-    return &adWishSpeed[0];
+	double *p = adWishSpeed;
+    return p;
 };

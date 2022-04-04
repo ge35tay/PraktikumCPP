@@ -8,7 +8,10 @@
 #include "PosEstimation.h"
 #include "string.h"
 
-PosEstimation::PosEstimation(){}
+PosEstimation::PosEstimation(){
+	memset(x, 0, sizeof(x));
+	dVelAverage = 0;
+}
 
 PosEstimation::~PosEstimation(){}
 
@@ -35,5 +38,6 @@ void PosEstimation::PredictPosition(double SpeedR, double SpeedL, double Timeste
 }
 
 double * PosEstimation::GetPosition(){
-	return x;
+	double *a = x;
+	return a;
 }

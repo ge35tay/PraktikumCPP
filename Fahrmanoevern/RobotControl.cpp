@@ -17,6 +17,10 @@ RobotControl::RobotControl(){
     interface.Initialize(0.04, transferFunction);
 	transferPointer = this;
 	bIsActive = false;
+	iMicros[0] = 1500;
+	iMicros[1] = 1500;
+	current_speed[0] = 0;
+	current_speed[1] = 0;
 };
 
 
@@ -25,7 +29,7 @@ RobotControl::RobotControl(){
 void RobotControl::Communicate(){
 
     // get the maneuver path 
-    char givenChar;
+    char givenChar, order;
     double chosenRadius = 0; 
     double chosenSpeed = 0;
 
@@ -40,7 +44,7 @@ void RobotControl::Communicate(){
     }
 
     if(givenChar =='y'){
-
+    	bIsActive = true;
         //Radius
         std::cout<<"Please enter the desired radius for the maneuver\n";
         std::cin >> chosenRadius;
@@ -70,11 +74,11 @@ void RobotControl::Communicate(){
         }
         // the corresponding movement generation
         if(givenChar == '8'){
-            maneuver.CalcEight(chosenRadius, chosenSpeed,timeStep);
+            maneuver.CalcEight(chosenRadius, chosenSpeed, timeStep);
 
 
         }else if(givenChar == 'o'){
-            maneuver.CalcCircle(chosenRadius, chosenSpeed,timeStep);
+            maneuver.CalcCircle(chosenRadius, chosenSpeed, timeStep);
         }
         //Positionsschaetzung zuruecksetzen
         posEstimation.Reset();
@@ -88,43 +92,48 @@ void RobotControl::Communicate(){
         //Solange nicht q gedrueckt wurde Benutzerwunsch einlesen 
         //und folgende Optionen anbieten: Start, Stop, Proceed
         while (1) {
-            clear();
-            printw("Press 1 to Start,  2 to Proceed, 3 to Stop\n");
-            givenChar = '\0';
-            givenChar = getch();
-            if (givenChar == 'q'){
-                break;
-            }
-            if (givenChar != ERR) {
-                switch (givenChar) {
-                    case '1'://start
-                        printw("%c\n", givenChar);
+
+            //printw("Press J to Start,  K to Proceed, L to Stop\n");
+            //givenChar = '\0';
+            order = getch();
+            if (order != ERR) {
+
+                switch (order) {
+                	clear();
+                    case 'J'://start
+                        printw("%c\n", order);
                         maneuver.start();
                         break;
 
-                    case '2': //proceed
-                        printw("%c\n", givenChar);
+                    case 'K': //proceed
+                        printw("%c\n", order);
                         maneuver.Proceed();
                         break;
-                    case '3': //proceed
-                        printw("%c\n", givenChar);
+                    case 'L': //strop
+                        printw("%c\n", order);
                         maneuver.stop();
                         break;
+                    case 'q':
+                    	maneuver.stop();
+                    	break;
                 }
+                if (order == 'q') break;
             }
         }
     
         //Warten bis Roboter steht
-        while(!(abs(current_speed[0] <= 0.005) && abs(current_speed[1]) <= 0.005)){};
+        while( current_speed[0] != 0.0 && current_speed[1] != 0.0){
+        	continue;
+        };
 
         //Step-Methode anhalten
-        maneuver.stop();
+        //maneuver.stop();
 
         //necurse beenden 
         sigprocmask(SIG_BLOCK, &interface.mask, nullptr);
         endwin();
 
-    }else{
+    }else if(givenChar == 'n'){
 
         bIsActive = false;
     }
@@ -152,8 +161,8 @@ void RobotControl::Step(){
 //        //left is 1
         motorL.CalculateU(*(maneuver.GetManeuverSpeed()+1) ,current_speed[1]);
         motorR.CalculateU(*(maneuver.GetManeuverSpeed()) ,current_speed[0]);
-        iMicros[0] = motorR.GetU() + 1500;
-        iMicros[1] = motorL.GetU() + 1500;
+        iMicros[0] = int(motorR.GetU() + 1500);
+        iMicros[1] = int(motorL.GetU() + 1500);
 
         if(iMicros[0]>2000){
             iMicros[0] = 2000;
@@ -171,8 +180,9 @@ void RobotControl::Step(){
             iMicros[1] = 1000;
         }
 
-        interface.SetOutputs(&iMicros[0]);
+
     }
+    interface.SetOutputs(iMicros);
 }
 
 void RobotControl::transferFunction()

@@ -12,6 +12,7 @@
 #include <cmath>
 #include <list>
 #include <string>
+#include "ncurses.h"
 
 class Maneuver
 {

@@ -22,8 +22,8 @@ private:
 	InterfaceSIM interface;
 	Maneuver maneuver;
 	PosEstimation posEstimation;
-	PIDController motorR = PIDController(500,100,0,0.4);
-	PIDController motorL = PIDController(500,100,0,0.4);
+	PIDController motorR = PIDController(500,100,0,0.04);
+	PIDController motorL = PIDController(500,100,0,0.04);
 	bool bIsActive;
 	int iMicros[2];
 	double current_speed[2];

@@ -17,7 +17,7 @@ PIDController::PIDController(double Kp, double Ki, double Kd, double Ta){
 }
 
 void PIDController::CalculateU(double dW, double dY){
-	dU = dKp*(dW - dY) + dKi*dEsum + dKd*(dW -dY -deold)/dTa;
+	dU = dKp*(dW - dY) + dKi*dEsum*dTa + dKd*(dW -dY -deold)/dTa;
 	dEsum += dW -dY;
 	deold = dW- dY;
 }
