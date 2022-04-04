@@ -9,8 +9,9 @@
  * 
  */
 #include "RobotControl.h"
-
-RobotControl *RobotControl::transferPointer = nullptr;
+#include <cstdlib>
+#include <unistd.h>
+#include <mutex>
 
 RobotControl::RobotControl(){
     interface.Initialize(0.04, transferFunction);
@@ -18,10 +19,7 @@ RobotControl::RobotControl(){
 	bIsActive = false;
 };
 
-void RobotControl::transferFunction()
-{
-	transferPointer->Step();
-}
+
 
 
 void RobotControl::Communicate(){
@@ -51,7 +49,7 @@ void RobotControl::Communicate(){
             std::cout<<"The radius should be a positive number, please try again!\n";
             std::cin >> chosenRadius;
         }
-        
+
         //Speed
         std::cout<<"Please enter the desired speed for the maneuver\n";
         std::cin >> chosenSpeed;
@@ -69,12 +67,12 @@ void RobotControl::Communicate(){
             std::cout<<"Please try again\n";
             std::cin >> givenChar;
 
-        } 
+        }
         // the corresponding movement generation
         if(givenChar == '8'){
             maneuver.CalcEight(chosenRadius, chosenSpeed,timeStep);
-            
-            
+
+
         }else if(givenChar == 'o'){
             maneuver.CalcCircle(chosenRadius, chosenSpeed,timeStep);
         }
@@ -83,10 +81,10 @@ void RobotControl::Communicate(){
 
         //ncurses starte
         initscr();
-
+        //step method starten
+        sigprocmask(SIG_UNBLOCK, &interface.mask, nullptr);
         nodelay(stdscr, TRUE);
         noecho();
-        sigprocmask(SIG_UNBLOCK, &interface.mask, nullptr);
         //Solange nicht q gedrueckt wurde Benutzerwunsch einlesen 
         //und folgende Optionen anbieten: Start, Stop, Proceed
         while (1) {
@@ -138,7 +136,7 @@ void RobotControl::Step(){
     current_speed[0] = *(interface.GetInput());
     current_speed[1] = *(interface.GetInput() + 1);
 
-    if(maneuver.isRunning()==false){
+    if(!maneuver.isRunning()){
         iMicros[0] = 1500;
         iMicros[1] = 1500;
 
@@ -146,13 +144,14 @@ void RobotControl::Step(){
 
         posEstimation.PredictPosition(current_speed[0], current_speed[1], timeStep);
         double xEst, yEst, winkelEst;
-        xEst = *posEstimation.GetPosition();
+        xEst = *(posEstimation.GetPosition());
         yEst = *(posEstimation.GetPosition()+1);
         winkelEst = *(posEstimation.GetPosition()+2);
+
         maneuver.CalcManeuverSpeed(xEst, yEst, winkelEst);
-        //left is 1
+//        //left is 1
         motorL.CalculateU(*(maneuver.GetManeuverSpeed()+1) ,current_speed[1]);
-        motorR.CalculateU(*maneuver.GetManeuverSpeed() ,current_speed[0]);
+        motorR.CalculateU(*(maneuver.GetManeuverSpeed()) ,current_speed[0]);
         iMicros[0] = motorR.GetU() + 1500;
         iMicros[1] = motorL.GetU() + 1500;
 
@@ -172,10 +171,16 @@ void RobotControl::Step(){
             iMicros[1] = 1000;
         }
 
-        interface.SetOutputs(iMicros);
+        interface.SetOutputs(&iMicros[0]);
     }
 }
 
+void RobotControl::transferFunction()
+{
+	transferPointer->Step();
+}
+
+RobotControl *RobotControl::transferPointer = nullptr;
 
 bool RobotControl::isActive(){
 	if(bIsActive){

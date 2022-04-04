@@ -18,6 +18,7 @@ void Maneuver::CalcCircle(double Radius, double Speed, double Timestep){
         Maneuver::Coord Round_coord = Maneuver::Coord(x, y, Speed);
         Coordlist.push_back(Round_coord);
     }
+    iter = Coordlist.begin();
 }
 
 
@@ -40,6 +41,7 @@ void Maneuver::CalcEight(double dRadius, double dSpeed, double dTimestep){
         Coordlist.push_back(this_coord);
 
     }
+    iter = Coordlist.begin();
 
 };
 
@@ -67,7 +69,7 @@ void Maneuver::Loglist(std::string sDatei){
 
 
 bool Maneuver::isRunning(){
-    if(blsRunning){
+    if(bIsRunning){
         return true;
     }else{
         return false;
@@ -76,32 +78,31 @@ bool Maneuver::isRunning(){
 
 void Maneuver::start(){
     iter=Coordlist.begin();
-    blsRunning = true;
+    bIsRunning = true;
 
 }
 
 void Maneuver::stop(){
-    blsRunning = false;
+    bIsRunning = false;
 };
 
 void Maneuver::Proceed(){
-    blsRunning = true;
+    bIsRunning = true;
 }
 
 void Maneuver::CalcManeuverSpeed(double dX, double dY, double dW){
 
 
     // check if the soll position is reached:
-    if( sqrt(pow(iter->dX - dX, 2) + pow(iter->dY - dY, 2) * 1.0) <dPosDifference){
-        iter++;
+    if( sqrt(pow((iter->dX - dX), 2) + pow((iter->dY - dY), 2) * 1.0) <dPosDifference){
+    	iter++;
     }
     
     if(iter == Coordlist.end()){
-        adWishSpeed[0] = 0.0; 
-        adWishSpeed[1] = 0.0; 
+        adWishSpeed[0] = 0.0;
+        adWishSpeed[1] = 0.0;
         stop();
     }else{
-        
         //Winkeld zwischen soll und Akt berechnen
         //soll - akt
         double phi = atan2((iter->dY-dY), (iter->dX-dX));
